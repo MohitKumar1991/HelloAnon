@@ -3,13 +3,14 @@ from wsgiref import headers
 from aiohttp import ClientSession
 import asyncio
 
+
 async def run_in_parallel(atasks):
     responses = asyncio.gather(*atasks, return_exceptions=True)
 
 
-async def create_request_task(session:ClientSession, url):
-    async with session.get(url,headers={
-        "apikey":""
+async def create_request_task(session: ClientSession, url):
+    async with session.get(url, headers={
+        "apikey": ""
     }) as response:
         print("Status:", response.status)
         print("Content-type:", response.headers['content-type'])

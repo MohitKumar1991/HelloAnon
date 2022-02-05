@@ -10,15 +10,17 @@ SIMPLE_QUERY = """query {
 }
 """
 
-def make_gql_query_string(param_types=None): 
+
+def make_gql_query_string(param_types=None):
     query_str = SIMPLE_QUERY
-    prefix= ''
+    prefix = ''
     if param_types is not None:
         prefix = 'query '
         prefix += json.dumps(param_types).replace('"', '').replace('{', '(').replace('}', ')')
         prefix += '{'
     print(prefix + query_str)
     return gquery(prefix + query_str)
+
 
 async def make_graph_query(gQ):
     transport = AIOHTTPTransport(url="https://api.thegraph.com/subgraphs/name/aave/protocol-v2")
@@ -28,5 +30,4 @@ async def make_graph_query(gQ):
 
 
 async def fetch_user_data():
-    return  await make_graph_query(make_gql_query_string())
-
+    return await make_graph_query(make_gql_query_string())
