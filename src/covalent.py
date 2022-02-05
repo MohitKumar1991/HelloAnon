@@ -1,4 +1,5 @@
-import requests
+import aiohttp
+
 
 COVALENT_TOKEN_API = 'https://api.covalenthq.com/v1/137/address/0x5dd596c901987a2b28c38a9c1dfbf86fffc15d77/balances_v2/?key=ckey_a26b822b9ea9402390d8f996d27'
 
@@ -30,6 +31,7 @@ def _fetch_token_data(response_json):
 
 
 async def fetch_token_balance():
-    response = requests.get(COVALENT_TOKEN_API, headers={"Content-Type": "application/json"})
-    response_json = response.json()
-    return _fetch_token_data(response_json)
+    async with aiohttp.ClientSession() as session:
+        async with session.get(COVALENT_TOKEN_API, headers={"Content-Type": "application/json"}) as response:
+            response_json = await response.json()
+            return _fetch_token_data(response_json)

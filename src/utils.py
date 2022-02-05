@@ -1,5 +1,6 @@
 from multiprocessing.connection import Client
 from wsgiref import headers
+import aiohttp
 from aiohttp import ClientSession
 import asyncio
 
