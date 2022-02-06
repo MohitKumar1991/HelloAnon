@@ -27,6 +27,7 @@ def calculate_user_profile(balance_json):
     total_usd_value += _fetch_total_token_usd_value(balance_json)
     total_usd_value += _fetch_total_protocol_usd_value(balance_json)
 
+    balance_json['profile']['total_usd_value'] = total_usd_value
     if total_usd_value >= 1000000:
         balance_json['profile']['size_class'] = 'whale'
     elif 100000 < total_usd_value < 1000000:
