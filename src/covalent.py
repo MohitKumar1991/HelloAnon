@@ -1,6 +1,5 @@
 import aiohttp
 
-
 COVALENT_TOKEN_API = 'https://api.covalenthq.com/v1/137/address/0x5dd596c901987a2b28c38a9c1dfbf86fffc15d77/balances_v2/?key=ckey_a26b822b9ea9402390d8f996d27'
 COVALENT_SUSHISWAP_BALANCES_API = 'https://api.covalenthq.com/v1/137/address/0x5dd596c901987a2b28c38a9c1dfbf86fffc15d77/stacks/sushiswap/balances/?&key=ckey_a26b822b9ea9402390d8f996d27'
 COVALENT_AAVE_BALANCES_API = 'https://api.covalenthq.com/v1/137/address/0x5dd596c901987a2b28c38a9c1dfbf86fffc15d77/stacks/aave_v2/balances/?&key=ckey_a26b822b9ea9402390d8f996d27'
@@ -38,6 +37,7 @@ async def fetch_token_balance():
         async with session.get(COVALENT_TOKEN_API, headers={"Content-Type": "application/json"}) as response:
             response_json = await response.json()
             return _fetch_token_data(response_json)
+
 
 """
         "sushiswap": {
@@ -255,18 +255,41 @@ async def fetch_token_balance():
             ]
         }
 """
+
+
 def _fetch_sushiswap_data(response_json):
+    sushiswap_data = []
     if 'data' in response_json and response_json['data']:
         if 'sushiswap' in response_json['data'] and 'balances' in response_json['data']['sushiswap']:
             for token_pair_balance in response_json['data']['sushiswap']['balances']:
-                first_token = token_pair_balance['token_0']
-                second_token = token_pair_balance['token_1']
-                pool_token = token_pair_balance['pool_token']
+
+                try:
+                    pool_token = token_pair_balance['pool_token']
+
+                    contract_decimals = pool_token['contract_decimals']
+                    balance = pool_token['balance']
+                    quote_rate = pool_token['quote_rate']
+                    contract_ticker_symbol = pool_token['contract_ticker_symbol']
+
+                    token_count = int(balance) / (10 ** contract_decimals)
+                    usd_value = token_count * quote_rate
+
+                    sushiswap_data.append({
+                        'name': 'Sushiswap',
+                        'lp': contract_ticker_symbol,
+                        'value': int(balance),
+                        'usd': usd_value
+                    })
+                except Exception as e:
+                    continue
+
+    return sushiswap_data
 
 
 async def fetch_sushiswap_data():
     async with aiohttp.ClientSession() as session:
-        async with session.get(COVALENT_SUSHISWAP_BALANCES_API, headers={"Content-Type": "application/json"}) as response:
+        async with session.get(COVALENT_SUSHISWAP_BALANCES_API,
+                               headers={"Content-Type": "application/json"}) as response:
             response_json = await response.json()
             return _fetch_sushiswap_data(response_json)
 
@@ -296,5 +319,3 @@ async def fetch_aave_data():
         async with session.get(COVALENT_AAVE_BALANCES_API, headers={"Content-Type": "application/json"}) as response:
             response_json = await response.json()
             return _fetch_aave_data(response_json)
-
-
