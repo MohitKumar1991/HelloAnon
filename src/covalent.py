@@ -3,6 +3,8 @@ import aiohttp
 
 COVALENT_TOKEN_API = 'https://api.covalenthq.com/v1/137/address/0x5dd596c901987a2b28c38a9c1dfbf86fffc15d77/balances_v2/?key=ckey_a26b822b9ea9402390d8f996d27'
 COVALENT_SUSHISWAP_BALANCES_API = 'https://api.covalenthq.com/v1/137/address/0x5dd596c901987a2b28c38a9c1dfbf86fffc15d77/stacks/sushiswap/balances/?&key=ckey_a26b822b9ea9402390d8f996d27'
+COVALENT_AAVE_BALANCES_API = 'https://api.covalenthq.com/v1/137/address/0x5dd596c901987a2b28c38a9c1dfbf86fffc15d77/stacks/aave_v2/balances/?&key=ckey_a26b822b9ea9402390d8f996d27'
+
 
 def _fetch_token_data(response_json):
     token_data = {'tokens': []}
@@ -255,7 +257,7 @@ async def fetch_token_balance():
 def _fetch_sushiswap_data(response_json):
     if 'data' in response_json and response_json['data']:
         if 'sushiswap' in response_json['data'] and 'balances' in response_json['data']['sushiswap']:
-            for token_pair_balance in response_json['data']['sushiswap']:
+            for token_pair_balance in response_json['data']['sushiswap']['balances']:
                 first_token = token_pair_balance['token_0']
                 second_token = token_pair_balance['token_1']
                 pool_token = token_pair_balance['pool_token']
@@ -263,6 +265,35 @@ def _fetch_sushiswap_data(response_json):
 
 async def fetch_sushiswap_data():
     async with aiohttp.ClientSession() as session:
-        async with session.get(COVALENT_TOKEN_API, headers={"Content-Type": "application/json"}) as response:
+        async with session.get(COVALENT_SUSHISWAP_BALANCES_API, headers={"Content-Type": "application/json"}) as response:
             response_json = await response.json()
             return _fetch_sushiswap_data(response_json)
+
+
+def _fetch_aave_data(response_json):
+    total_usd_value = 0
+    if 'data' in response_json and response_json['data']:
+        if 'aave' in response_json['data'] and 'balances' in response_json['data']['aave']:
+            for pool_balance in response_json['data']['aave']['balances']:
+                balance = pool_balance['balance']
+                atoken_balance = balance['atoken_balance']
+                asset_contract_decimals = balance['asset_contract_decimals']
+                quote_rate = balance['quote_rate']
+
+                token_count = int(atoken_balance) / (10 ** asset_contract_decimals)
+                usd_value = token_count * quote_rate
+                total_usd_value += usd_value
+
+    return {
+        'name': 'Aave',
+        'usd': total_usd_value
+    }
+
+
+async def fetch_aave_data():
+    async with aiohttp.ClientSession() as session:
+        async with session.get(COVALENT_AAVE_BALANCES_API, headers={"Content-Type": "application/json"}) as response:
+            response_json = await response.json()
+            return _fetch_aave_data(response_json)
+
+
