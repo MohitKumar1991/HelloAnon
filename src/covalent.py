@@ -1,5 +1,7 @@
 import aiohttp
 
+TOKEN_BLACKLIST = ['Zepe.io', 'AeFX.io', 'FlowDAO.io', 'MNEP', 'DxDex.io', 'MegaDoge']
+
 
 def _fetch_token_data(response_json):
     token_data = {'tokens': []}
@@ -12,6 +14,8 @@ def _fetch_token_data(response_json):
                     token_type = item['type']
                     quote_rate = item['quote_rate']
                     contract_ticker_symbol = item['contract_ticker_symbol']
+                    if contract_ticker_symbol in TOKEN_BLACKLIST:
+                        continue
 
                     if token_type == 'cryptocurrency':
                         token_count = int(balance) / (10 ** contract_decimals)
