@@ -25,5 +25,7 @@ def calculate_user_profile(balance_json):
         balance_json['profile']['size_class'] = 'whale'
     elif 100000 < total_usd_value < 1000000:
         balance_json['profile']['size_class'] = 'shark'
-    else:
+    elif 10000 < total_usd_value < 100000:
         balance_json['profile']['size_class'] = 'shrimp'
+    else:
+        balance_json['profile']['size_class'] = 'crab'

@@ -1,9 +1,5 @@
 import aiohttp
 
-COVALENT_TOKEN_API = 'https://api.covalenthq.com/v1/137/address/0x5dd596c901987a2b28c38a9c1dfbf86fffc15d77/balances_v2/?key=ckey_a26b822b9ea9402390d8f996d27'
-COVALENT_SUSHISWAP_BALANCES_API = 'https://api.covalenthq.com/v1/137/address/0x5dd596c901987a2b28c38a9c1dfbf86fffc15d77/stacks/sushiswap/balances/?&key=ckey_a26b822b9ea9402390d8f996d27'
-COVALENT_AAVE_BALANCES_API = 'https://api.covalenthq.com/v1/137/address/0x5dd596c901987a2b28c38a9c1dfbf86fffc15d77/stacks/aave_v2/balances/?&key=ckey_a26b822b9ea9402390d8f996d27'
-
 
 def _fetch_token_data(response_json):
     token_data = {'tokens': []}
@@ -32,7 +28,8 @@ def _fetch_token_data(response_json):
     return token_data
 
 
-async def fetch_token_balance():
+async def fetch_token_balance(address):
+    COVALENT_TOKEN_API = f'https://api.covalenthq.com/v1/137/address/{address}/balances_v2/?key=ckey_a26b822b9ea9402390d8f996d27'
     async with aiohttp.ClientSession() as session:
         async with session.get(COVALENT_TOKEN_API, headers={"Content-Type": "application/json"}) as response:
             response_json = await response.json()
@@ -286,7 +283,8 @@ def _fetch_sushiswap_data(response_json):
     return sushiswap_data
 
 
-async def fetch_sushiswap_data():
+async def fetch_sushiswap_data(address):
+    COVALENT_SUSHISWAP_BALANCES_API = f'https://api.covalenthq.com/v1/137/address/{address}/stacks/sushiswap/balances/?&key=ckey_a26b822b9ea9402390d8f996d27'
     async with aiohttp.ClientSession() as session:
         async with session.get(COVALENT_SUSHISWAP_BALANCES_API,
                                headers={"Content-Type": "application/json"}) as response:
@@ -314,7 +312,8 @@ def _fetch_aave_data(response_json):
     }
 
 
-async def fetch_aave_data():
+async def fetch_aave_data(address):
+    COVALENT_AAVE_BALANCES_API = f'https://api.covalenthq.com/v1/137/address/{address}/stacks/aave_v2/balances/?&key=ckey_a26b822b9ea9402390d8f996d27'
     async with aiohttp.ClientSession() as session:
         async with session.get(COVALENT_AAVE_BALANCES_API, headers={"Content-Type": "application/json"}) as response:
             response_json = await response.json()

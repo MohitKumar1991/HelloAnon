@@ -1,7 +1,5 @@
-import json
-import uvicorn
 from fastapi import FastAPI
-from .graph import fetch_user_data, make_gql_query_string
+from .graph import fetch_user_data
 from .covalent import fetch_token_balance
 from .ens import fetch_ens
 
@@ -13,15 +11,17 @@ async def root():
     return {"message": "Hello World"}
 
 
-@app.get("/graph")
-async def graph():
-    return await fetch_user_data()
+@app.get("/polygon_balance/{address}")
+async def polygon_balance(address):
+    return await fetch_user_data(address)
 
-@app.get("/token_balance")
-async def token_balance():
-    return await fetch_token_balance()
 
-@app.get("/ens")
-async def get_ens():
-    return await fetch_ens()
+@app.get("/token_balance/{address}")
+async def token_balance(address):
+    return await fetch_token_balance(address)
+
+
+@app.get("/ens/{address}")
+async def get_ens(address):
+    return await fetch_ens(address)
 
