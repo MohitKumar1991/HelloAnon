@@ -1,0 +1,59 @@
+{
+    "profile": {
+        "reputation_score": 40,
+        "size_class": "whale",
+        "style_class": "hodler",
+        "ens_name":"mohit.eth",
+        "unstoppable_domains": [
+            {
+                "domain": "mohit.crypto"
+            }
+        ]
+    },
+    "tokens": [
+        {
+            "name": "POLY",
+            "balance": "1231",
+            "usd_value": "12312"
+        }
+    ],
+    "nfts": [
+        {
+            "name": "Polygon Punks",
+            "floor_price": "123"
+        }
+    ],
+    "protocols": [
+        {
+            "name": "Aave",
+            "usd": "1231",
+            "health_factor": 1.1
+        },
+        {
+            "name": "Quickswap",
+            "lp": "ETH/usdc",
+            "value":"0.12",
+            "usd": "1231"
+        },
+        {
+            "name": "Sushiswap",
+            "lp": "Matic/usdc",
+            "value":"0.12",
+            "usd": "1231"
+        }
+    ],
+    "history": [
+        {
+            "name": "trading tvl",
+            "value":  "123121"
+        },
+        {
+            "name": "hodl time",
+            "value": "2 years"
+        },
+        {
+            "name": "farming rewards",
+            "value": "123131"
+        }
+    ]
+}
