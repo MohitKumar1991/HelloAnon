@@ -265,6 +265,8 @@ def _fetch_sushiswap_data(response_json):
 
                     contract_decimals = pool_token['contract_decimals']
                     balance = pool_token['balance']
+                    if int(balance) == 0:
+                        continue
                     quote_rate = pool_token['quote_rate']
                     contract_ticker_symbol = pool_token['contract_ticker_symbol']
 

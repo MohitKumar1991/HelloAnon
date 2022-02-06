@@ -2,7 +2,10 @@ def _fetch_total_token_usd_value(balance_json):
     usd_value = 0
     if 'tokens' in balance_json:
         for token in balance_json['tokens']:
-            usd_value += token['usd_value']
+            try:
+                usd_value += token['usd_value']
+            except Exception as e:
+                continue
 
     return usd_value
 
@@ -10,8 +13,11 @@ def _fetch_total_token_usd_value(balance_json):
 def _fetch_total_protocol_usd_value(balance_json):
     usd_value = 0
     if 'protocols' in balance_json:
-        for protocol in balance_json:
-            usd_value += protocol['usd']
+        for protocol in balance_json['protocols']:
+            try:
+                usd_value += protocol['usd']
+            except Exception as e:
+                continue
 
     return usd_value
 
@@ -29,3 +35,5 @@ def calculate_user_profile(balance_json):
         balance_json['profile']['size_class'] = 'shrimp'
     else:
         balance_json['profile']['size_class'] = 'crab'
+
+    return balance_json

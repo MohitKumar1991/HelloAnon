@@ -2,6 +2,9 @@ from re import L
 import asyncio
 from gql import Client, gql as gquery
 from gql.transport.aiohttp import AIOHTTPTransport
+from .covalent import fetch_token_balance, fetch_aave_data, fetch_sushiswap_data
+from .engine import calculate_user_profile
+from .ens import fetch_ens
 
 ##https://thegraph.com/hosted-service/subgraph/sameepsi/quickswap03
 
@@ -95,17 +98,28 @@ async def fetch_sushiswap(address):
 
 
 async def fetch_user_data(address):
-    resp = await asyncio.gather(fetch_sushiswap(address), fetch_quickswap(address), fetch_uniswap_data(address),
+    balance_json = {'profile': {
+        'address': address
+    },
+        'protocols': [],
+        'tokens': []
+    }
+    # resp = await asyncio.gather(fetch_sushiswap(address), fetch_quickswap(address), fetch_uniswap_data(address),
+    #                             fetch_token_balance(address), fetch_aave_data(address), fetch_sushiswap_data(address),
+    #                             fetch_ens(address),
+    #                             return_exceptions=True)
+
+    resp = await asyncio.gather(fetch_token_balance(address), fetch_ens(address), fetch_aave_data(address),
+                                fetch_sushiswap_data(address),
                                 return_exceptions=True)
-    print(resp)
-    return [
-        {
-            "name": "SushiSwap",
-        }.update(resp[0]),
-        {
-            "name": "QuickSwap",
-        }.update(resp[1]),
-        {
-            "name": "Uniswap",
-        }.update(resp[2])
-    ]
+
+    balance_json['profile']['ens'] = resp[1]['ens']
+    balance_json['protocols'].append(resp[2])
+    for sushiswap_lp_token in resp[3]:
+        balance_json['protocols'].append(sushiswap_lp_token)
+    
+    balance_json['tokens'] = (resp[0]['tokens'])
+    print(balance_json)
+    result_json = calculate_user_profile(balance_json)
+
+    return result_json
