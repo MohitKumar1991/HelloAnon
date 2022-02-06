@@ -24,6 +24,7 @@ def _fetch_token_data(response_json):
 
                         token_data['tokens'].append({
                             'token': contract_ticker_symbol,
+                            'balance': int(balance),
                             'usd_value': usd_value
                         })
                 except Exception as e:
